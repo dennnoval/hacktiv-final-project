@@ -2,15 +2,9 @@ package controller
 
 import (
 	e "hacktiv-final-project/entity"
-
 	g "github.com/gin-gonic/gin"
-
-	// h "net/http"
 	s "strconv"
-
 	"gorm.io/gorm"
-	// b "golang.org/x/crypto/bcrypt"
-	// "log"
 )
 
 func GetAllSocialMedias(ctx *g.Context) {
@@ -69,7 +63,7 @@ func UpdateSocialMedia(ctx *g.Context) {
 		db.Take(&sm)
 		ctx.JSON(200, g.H{
 			"id": sm.SocialMediaID, "name": sm.Name, "social_media_url": sm.SocialMediaUrl,
-			"user_id": sm.UserID, "updated_at": sm.CreatedAt,
+			"user_id": sm.UserID, "updated_at": sm.UpdatedAt,
 		})
 	}
 }
