@@ -3,7 +3,6 @@ package middleware
 import (
 	e "hacktiv-final-project/entity"
 	"log"
-
 	g "github.com/gin-gonic/gin"
 	v "github.com/go-playground/validator/v10"
 )
