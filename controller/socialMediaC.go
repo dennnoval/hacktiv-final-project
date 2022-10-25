@@ -67,7 +67,7 @@ func UpdateSocialMedia(ctx *g.Context) {
 		ctx.AbortWithStatusJSON(200, g.H{"message": err.Error()})
 	} else {
 		db.Take(&sm)
-		ctx.JSON(201, g.H{
+		ctx.JSON(200, g.H{
 			"id": sm.SocialMediaID, "name": sm.Name, "social_media_url": sm.SocialMediaUrl,
 			"user_id": sm.UserID, "updated_at": sm.CreatedAt,
 		})
