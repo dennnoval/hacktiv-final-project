@@ -4,7 +4,6 @@ import (
 	conf "hacktiv-final-project/config"
 	m "hacktiv-final-project/middleware"
 	r "hacktiv-final-project/routes"
-
 	g "github.com/gin-gonic/gin"
 )
 
@@ -16,7 +15,7 @@ func main() {
 	})
 	r.UsersRoutes(router, m.Authentication(), m.Authorization(), m.RegisterUserValidation(), m.UpdateUserValidation())
 	r.PhotosRoutes(router, m.Authorization(), m.PhotoValidation())
-	r.CommentsRoutes(router)
+	r.CommentsRoutes(router, m.Authorization(), m.CommentValidation(), m.UpdateCommentValidation())
 	r.SocialMediasRoutes(router, m.Authorization(), m.SocialMediaValidation())
 	router.Run()
 }
