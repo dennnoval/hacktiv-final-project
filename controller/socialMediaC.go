@@ -2,10 +2,13 @@ package controller
 
 import (
 	e "hacktiv-final-project/entity"
+
 	g "github.com/gin-gonic/gin"
+
 	// h "net/http"
-	"gorm.io/gorm"
 	s "strconv"
+
+	"gorm.io/gorm"
 	// b "golang.org/x/crypto/bcrypt"
 	// "log"
 )
@@ -13,31 +16,29 @@ import (
 func GetAllSocialMedias(ctx *g.Context) {
 	sm := []e.SocialMedia{}
 	db := ctx.MustGet("db").(*gorm.DB)
-	f := db.Preload("User").Find(&sm)
-	c := f.RowsAffected
-	if err := f.Error; err != nil {
-		ctx.AbortWithStatusJSON(200, g.H{"message": err.Error()})
+	err := db.Find(&sm).Error
+	if err != nil {
+		ctx.AbortWithStatusJSON(200, err)
 	} else {
-		amm := make([]map[string]interface{}, c)
-		var p e.Photo
-		for i, _ := range sm {
-			smm := make(map[string]interface{})
-			smm["id"] = sm[i].SocialMediaID
-			smm["name"] = sm[i].Name
-			smm["social_media_url"] = sm[i].SocialMediaUrl
-			smm["UserId"] = sm[i].UserID
-			smm["createdAt"] = sm[i].CreatedAt
-			smm["updatedAt"] = sm[i].UpdatedAt
-			p = e.Photo{UserID: sm[i].UserID}
+		smm := make(map[string]interface{}, len(sm))
+		for _, v := range sm {
+			u := e.User{UserID: v.UserID}
+			db.Take(&u)
+			p := e.Photo{UserID: u.UserID}
 			db.Take(&p)
-			u := make(map[string]interface{})
-			u["id"] = sm[i].UserID
-			u["username"] = sm[i].User.Username
-			u["profile_image_url"] = p.PhotoUrl
-			smm["User"] = u
-			amm[i] = smm
+			um := map[string]interface{}{
+				"id": u.UserID, "username": u.Username,
+				"profile_image_url": p.PhotoUrl,
+			}
+			smm["id"] = v.UserID
+			smm["name"] = v.Name
+			smm["social_media_url"] = v.SocialMediaUrl
+			smm["User_id"] = v.UserID
+			smm["createdAt"] = v.CreatedAt
+			smm["updatedAt"] = v.UpdatedAt
+			smm["User"] = um
 		}
-		ctx.JSON(200, g.H{"social_medias": amm})
+		ctx.JSON(200, g.H{"social_medias": smm})
 	}
 }
 
@@ -51,7 +52,7 @@ func AddSocialMedia(ctx *g.Context) {
 		ctx.JSON(400, g.H{"message": "Failed to add social media!"})
 	} else {
 		ctx.JSON(201, g.H{
-			"id": sm.SocialMediaID, "name": sm.Name, "social_media_url": sm.SocialMediaUrl, 
+			"id": sm.SocialMediaID, "name": sm.Name, "social_media_url": sm.SocialMediaUrl,
 			"user_id": sm.UserID, "created_at": sm.CreatedAt,
 		})
 	}
@@ -67,7 +68,7 @@ func UpdateSocialMedia(ctx *g.Context) {
 	} else {
 		db.Take(&sm)
 		ctx.JSON(201, g.H{
-			"id": sm.SocialMediaID, "name": sm.Name, "social_media_url": sm.SocialMediaUrl, 
+			"id": sm.SocialMediaID, "name": sm.Name, "social_media_url": sm.SocialMediaUrl,
 			"user_id": sm.UserID, "updated_at": sm.CreatedAt,
 		})
 	}
@@ -78,8 +79,8 @@ func DeleteSocialMedia(ctx *g.Context) {
 	sm := e.SocialMedia{SocialMediaID: smId}
 	db := ctx.MustGet("db").(*gorm.DB)
 	if err := db.Delete(&sm).Error; err != nil {
-		ctx.AbortWithStatusJSON(200, g.H{"message":"Social media doesn't exists"})
+		ctx.AbortWithStatusJSON(200, g.H{"message": "Social media doesn't exists"})
 		return
 	}
-	ctx.JSON(200, g.H{"message":"Your social media has been deleted successfully"})
+	ctx.JSON(200, g.H{"message": "Your social media has been deleted successfully"})
 }
