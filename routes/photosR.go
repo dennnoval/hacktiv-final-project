@@ -2,7 +2,6 @@ package router
 
 import (
 	c "hacktiv-final-project/controller"
-
 	g "github.com/gin-gonic/gin"
 )
 
