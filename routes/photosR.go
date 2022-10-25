@@ -1,14 +1,16 @@
 package router
 
 import (
-	g "github.com/gin-gonic/gin"
 	c "hacktiv-final-project/controller"
+
+	g "github.com/gin-gonic/gin"
 )
 
-func PhotosRoutes(r *g.Engine) {
+func PhotosRoutes(r *g.Engine, mid ...g.HandlerFunc) {
 	rg := r.Group("/photos")
+	rg.Use(mid[0])
 	rg.GET("", c.GetAllPhotos)
-	rg.POST("", c.AddPhoto)
+	rg.POST("", mid[1], c.AddPhoto)
 	rg.PUT("/:photoId", c.UpdatePhoto)
 	rg.DELETE("/:photoId", c.DeletePhoto)
 }
