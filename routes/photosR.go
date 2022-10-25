@@ -11,6 +11,6 @@ func PhotosRoutes(r *g.Engine, mid ...g.HandlerFunc) {
 	rg.Use(mid[0])
 	rg.GET("", c.GetAllPhotos)
 	rg.POST("", mid[1], c.AddPhoto)
-	rg.PUT("/:photoId", c.UpdatePhoto)
+	rg.PUT("/:photoId", mid[1], c.UpdatePhoto)
 	rg.DELETE("/:photoId", c.DeletePhoto)
 }
