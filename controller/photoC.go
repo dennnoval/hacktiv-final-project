@@ -2,11 +2,8 @@ package controller
 
 import (
 	e "hacktiv-final-project/entity"
-
 	g "github.com/gin-gonic/gin"
-
 	s "strconv"
-
 	"gorm.io/gorm"
 )
 
@@ -65,7 +62,7 @@ func UpdatePhoto(ctx *g.Context) {
 		db.Take(&p)
 		ctx.JSON(200, g.H{
 			"id": p.PhotoID, "title": p.Title, "caption": p.Caption,
-			"photo_url": p.PhotoUrl, "user_id": p.UserID, "updated_at": p.CreatedAt,
+			"photo_url": p.PhotoUrl, "user_id": p.UserID, "updated_at": p.UpdatedAt,
 		})
 	}
 }
@@ -75,7 +72,7 @@ func DeletePhoto(ctx *g.Context) {
 	p := e.Photo{PhotoID: pId}
 	db := ctx.MustGet("db").(*gorm.DB)
 	if err := db.Delete(&p).Error; err != nil {
-		ctx.AbortWithStatusJSON(200, g.H{"message": "Social media doesn't exists"})
+		ctx.AbortWithStatusJSON(200, g.H{"message": "Photo doesn't exists"})
 		return
 	}
 	ctx.JSON(200, g.H{"message": "Your photo has been deleted successfully"})
